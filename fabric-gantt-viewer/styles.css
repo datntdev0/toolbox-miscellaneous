@@ -1,0 +1,359 @@
+body {
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+  letter-spacing: 0.03em;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+}
+
+/* Metric Cards */
+.metric-card {
+  border-left: 4px solid #0d6efd;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #212529;
+  line-height: 1.2;
+}
+
+.metric-subvalue {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+/* Gantt Chart Container */
+.gantt-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 400px);
+  min-height: 500px;
+  background-color: #fff;
+  position: relative;
+}
+
+#ganttChart {
+  padding: 20px;
+  min-width: 100%;
+}
+
+/* Timeline Header */
+.timeline-header {
+  display: flex;
+  margin-bottom: 10px;
+  padding-left: 200px;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  border-bottom: 2px solid #dee2e6;
+  padding-bottom: 10px;
+}
+
+.timeline-tick {
+  position: relative;
+  border-left: 1px solid #dee2e6;
+  padding-left: 5px;
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* Gantt Row */
+.gantt-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  min-height: 40px;
+  padding: 5px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.gantt-row:hover {
+  background-color: #f8f9fa;
+}
+
+.gantt-label {
+  width: 200px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #212529;
+  padding-right: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.gantt-bars-container {
+  flex: 1;
+  position: relative;
+  height: 30px;
+}
+
+/* Gantt Bars */
+.gantt-bar {
+  position: absolute;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: white;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.gantt-bar:hover {
+  height: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+}
+
+.gantt-bar-queue {
+  background-color: #0dcaf0;
+  border: 1px solid #0aa2c0;
+}
+
+.gantt-bar-running {
+  background-color: #0d6efd;
+  border: 1px solid #0a58ca;
+}
+
+.gantt-bar.selected {
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.3);
+  z-index: 6;
+}
+
+/* Details Panel */
+.details-panel {
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.detail-group {
+  margin-bottom: 1.5rem;
+}
+
+.detail-group-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.detail-item {
+  display: flex;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: 500;
+  min-width: 150px;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-size: 0.85rem;
+  color: #212529;
+  font-family: 'Courier New', Courier, monospace;
+  word-break: break-all;
+  flex: 1;
+}
+
+.detail-command {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Grid lines */
+.timeline-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed #e9ecef;
+  pointer-events: none;
+}
+
+/* Peak CU line */
+.peak-cu-line {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background-color: #dc3545;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0.8;
+  margin-left: 200px;
+}
+
+.peak-cu-label {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #dc3545;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* Line Chart */
+.line-chart-container {
+  width: 100%;
+  min-height: 300px;
+  position: relative;
+}
+
+.line-chart-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+#lineChart {
+  display: block;
+  min-width: 100%;
+}
+
+.line-chart-grid {
+  stroke: #e9ecef;
+  stroke-width: 1;
+  stroke-dasharray: 4;
+}
+
+.line-chart-axis {
+  stroke: #6c757d;
+  stroke-width: 1.5;
+}
+
+.line-chart-path {
+  fill: none;
+  stroke: #0d6efd;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.line-chart-area {
+  fill: #0d6efd;
+  opacity: 0.1;
+}
+
+.line-chart-label {
+  font-size: 11px;
+  fill: #6c757d;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.line-chart-title {
+  font-size: 12px;
+  fill: #495057;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.line-chart-point {
+  fill: #0d6efd;
+  stroke: white;
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.line-chart-point:hover {
+  r: 5;
+  fill: #0a58ca;
+}
+
+.line-chart-peak-point {
+  fill: #dc3545;
+  stroke: white;
+  stroke-width: 2;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .gantt-label {
+    width: 150px;
+  }
+  
+  .metric-value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gantt-label {
+    width: 120px;
+    font-size: 0.75rem;
+  }
+  
+  .metric-value {
+    font-size: 1.3rem;
+  }
+  
+  .timeline-header {
+    padding-left: 120px;
+  }
+}
+
+/* Toast customization */
+.toast.text-bg-success {
+  background-color: #198754 !important;
+}
+
+.toast.text-bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.toast.text-bg-info {
+  background-color: #0dcaf0 !important;
+}
