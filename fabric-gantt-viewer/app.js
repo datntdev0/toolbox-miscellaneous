@@ -33,7 +33,7 @@ function handleFileUpload(event) {
       }
 
       // Validate required columns
-      const requiredColumns = ['request_id', 'submit_time', 'start_time', 'end_time', 'cu_per_second', 'allocated_cpu_time_seconds'];
+      const requiredColumns = ['request_id', 'submit_time', 'start_time', 'end_time', 'cpu_per_second', 'allocated_cpu_time_seconds'];
       const hasAllColumns = requiredColumns.every(col => csvData[0].hasOwnProperty(col));
       
       if (!hasAllColumns) {
@@ -119,7 +119,7 @@ function processData() {
       submit_time_ms: parseTimestamp(row.submit_time),
       start_time_ms: parseTimestamp(row.start_time),
       end_time_ms: parseTimestamp(row.end_time),
-      cu_per_second: parseFloat(row.cu_per_second) || 0,
+      cpu_per_second: parseFloat(row.cpu_per_second) || 0,
       allocated_cpu_time_seconds: parseFloat(row.allocated_cpu_time_seconds) || 0,
       total_elapsed_time_seconds: parseFloat(row.total_elapsed_time_seconds) || 0
     };
@@ -149,10 +149,10 @@ function displayMetrics() {
   document.getElementById('metricDurationSeconds').textContent = `${totalDurationSeconds.toFixed(2)} seconds`;
   
   // Average CU per second
-  const totalCU = csvData.reduce((sum, r) => sum + r.cu_per_second, 0);
+  const totalCU = csvData.reduce((sum, r) => sum + r.cpu_per_second, 0);
   const avgCU = totalCU / csvData.length;
-  const minCU = Math.min(...csvData.map(r => r.cu_per_second));
-  const maxCU = Math.max(...csvData.map(r => r.cu_per_second));
+  const minCU = Math.min(...csvData.map(r => r.cpu_per_second));
+  const maxCU = Math.max(...csvData.map(r => r.cpu_per_second));
   document.getElementById('metricAvgCU').textContent = avgCU.toFixed(2);
   document.getElementById('metricMinMaxCU').textContent = `min: ${minCU.toFixed(2)} | max: ${maxCU.toFixed(2)}`;
   
@@ -173,8 +173,8 @@ function calculatePeakCU() {
   
   csvData.forEach(row => {
     if (row.start_time_ms && row.end_time_ms) {
-      events.push({ time: row.start_time_ms, type: 'start', cu: row.cu_per_second });
-      events.push({ time: row.end_time_ms, type: 'end', cu: row.cu_per_second });
+      events.push({ time: row.start_time_ms, type: 'start', cu: row.cpu_per_second });
+      events.push({ time: row.end_time_ms, type: 'end', cu: row.cpu_per_second });
     }
   });
   
@@ -415,7 +415,7 @@ function showDetails(requestId) {
       <div class="detail-group-title">Performance Metrics</div>
       <div class="detail-item">
         <div class="detail-label">CU per Second</div>
-        <div class="detail-value">${row.cu_per_second}</div>
+        <div class="detail-value">${row.cpu_per_second}</div>
       </div>
       <div class="detail-item">
         <div class="detail-label">Allocated CPU Time</div>
@@ -504,7 +504,7 @@ function renderLineChart() {
     // Sum CU from all queries running at this time
     csvData.forEach(row => {
       if (row.start_time_ms <= currentTime && currentTime <= row.end_time_ms) {
-        totalCU += row.cu_per_second;
+        totalCU += row.cpu_per_second;
       }
     });
     

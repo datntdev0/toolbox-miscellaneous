@@ -23,7 +23,7 @@
     <div class="card-body">
       <input type="file" id="csvFileInput" accept=".csv" class="form-control"/>
       <div class="text-muted small mt-2">
-        Expected columns: request_id, connection_id, submit_time, start_time, end_time, total_elapsed_time_seconds, running_elapsed_time, row_count, allocated_cpu_time_seconds, statement_type, data_scanned_remote_storage_mb, data_scanned_memory_mb, command, cu_per_second
+        Expected columns: request_id, connection_id, submit_time, start_time, end_time, total_elapsed_time_seconds, running_elapsed_time, row_count, allocated_cpu_time_seconds, statement_type, data_scanned_remote_storage_mb, data_scanned_memory_mb, command, cpu_per_second
       </div>
     </div>
   </div>
@@ -42,7 +42,7 @@
     <div class="col-md-3">
       <div class="card shadow-sm metric-card">
         <div class="card-body">
-          <div class="metric-label"><i class="bi bi-speedometer2 me-1"></i>Average CU/Second</div>
+          <div class="metric-label"><i class="bi bi-speedometer2 me-1"></i>Average CPU/Second</div>
           <div class="metric-value" id="metricAvgCU">--</div>
           <div class="metric-subvalue" id="metricMinMaxCU">min: -- | max: --</div>
         </div>
@@ -60,7 +60,7 @@
     <div class="col-md-3">
       <div class="card shadow-sm metric-card">
         <div class="card-body">
-          <div class="metric-label"><i class="bi bi-lightning-charge me-1"></i>Peak CU/Second</div>
+          <div class="metric-label"><i class="bi bi-lightning-charge me-1"></i>Peak CPU/Second</div>
           <div class="metric-value" id="metricPeakCU">--</div>
           <div class="metric-subvalue" id="metricPeakTime">at --</div>
         </div>
