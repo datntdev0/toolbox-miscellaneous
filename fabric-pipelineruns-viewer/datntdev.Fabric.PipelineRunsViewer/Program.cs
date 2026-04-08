@@ -1,4 +1,5 @@
 using datntdev.Fabric.PipelineRunsViewer.Components;
+using datntdev.Fabric.PipelineRunsViewer.Services;
 
 namespace datntdev.Fabric.PipelineRunsViewer
 {
@@ -9,7 +10,12 @@ namespace datntdev.Fabric.PipelineRunsViewer
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddRazorComponents();
+            builder.Services.AddRazorComponents()
+                .AddInteractiveServerComponents();
+            
+            // Register Fabric API Service
+            builder.Services.AddScoped<FabricApiService>();
+            builder.Services.AddHttpClient();
 
             var app = builder.Build();
 
@@ -26,7 +32,8 @@ namespace datntdev.Fabric.PipelineRunsViewer
             app.UseAntiforgery();
 
             app.MapStaticAssets();
-            app.MapRazorComponents<App>();
+            app.MapRazorComponents<App>()
+                .AddInteractiveServerRenderMode();
 
             app.Run();
         }
