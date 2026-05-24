@@ -1,0 +1,56 @@
+/* ============================================================
+   Mô Phỏng Đáo Hạn Vay — Custom Styles
+   ============================================================ */
+
+body {
+  font-size: 0.9rem;
+}
+
+/* Sticky table header */
+thead.sticky-top th {
+  top: 0;
+  z-index: 10;
+}
+
+/* Compact loan badge */
+.loan-badge {
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Monospace numbers look crisp */
+.font-monospace {
+  letter-spacing: 0.03em;
+}
+
+/* Summary card top border accent */
+.border-4 {
+  border-top-width: 4px !important;
+}
+
+/* Subtle zebra for table */
+.table-hover > tbody > tr:hover > * {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Chart canvas */
+#paymentChart {
+  max-height: 320px;
+}
+
+/* Responsive table scrollbar styling */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
