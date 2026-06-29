@@ -1,1 +1,7 @@
+.venv/
+input/
 output/
+__pycache__/
+.eggs/
+*.egg-info/
+*.pth
