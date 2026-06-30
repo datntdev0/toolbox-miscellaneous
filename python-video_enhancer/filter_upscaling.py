@@ -46,10 +46,10 @@ def get_sub_video(args, num_process, process_idx):
     os.makedirs(osp.join(args.output, f'{args.video_name}_inp_tmp_videos'), exist_ok=True)
     out_path = osp.join(args.output, f'{args.video_name}_inp_tmp_videos', f'{process_idx:03d}.mp4')
     cmd = [
-        args.ffmpeg_bin, f'-i {args.input}', '-ss', f'{part_time * process_idx}',
+        args.ffmpeg_bin, '-hide_banner', '-loglevel', 'error', f'-i {args.input}', '-ss',
+        f'{part_time * process_idx}',
         f'-to {part_time * (process_idx + 1)}' if process_idx != num_process - 1 else '', '-async 1', out_path, '-y'
     ]
-    print(' '.join(cmd))
     subprocess.call(' '.join(cmd), shell=True)
     return out_path
 
@@ -283,7 +283,7 @@ def run(args):
     if args.extract_frame_first:
         tmp_frames_folder = osp.join(args.output, f'{args.video_name}_inp_tmp_frames')
         os.makedirs(tmp_frames_folder, exist_ok=True)
-        os.system(f'ffmpeg -i {args.input} -qscale:v 1 -qmin 1 -qmax 1 -vsync 0  {tmp_frames_folder}/frame%08d.png')
+        os.system(f'ffmpeg -hide_banner -loglevel error -i {args.input} -qscale:v 1 -qmin 1 -qmax 1 -vsync 0  {tmp_frames_folder}/frame%08d.png')
         args.input = tmp_frames_folder
 
     num_gpus = torch.cuda.device_count()
@@ -298,6 +298,10 @@ def run(args):
     pbar = tqdm(total=num_process, unit='sub_video', desc='inference')
     for i in range(num_process):
         sub_video_save_path = osp.join(args.output, f'{args.video_name}_out_tmp_videos', f'{i:03d}.mp4')
+        # Resume: skip sub videos already produced by a previous run.
+        if osp.exists(sub_video_save_path) and not args.force:
+            pbar.update(1)
+            continue
         pool.apply_async(
             inference_video,
             args=(args, sub_video_save_path, torch.device(i % num_gpus), num_process, i),
@@ -312,15 +316,19 @@ def run(args):
             f.write(f'file \'{args.video_name}_out_tmp_videos/{i:03d}.mp4\'\n')
 
     cmd = [
-        args.ffmpeg_bin, '-f', 'concat', '-safe', '0', '-i', f'{args.output}/{args.video_name}_vidlist.txt', '-c',
-        'copy', f'{video_save_path}'
+        args.ffmpeg_bin, '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i',
+        f'{args.output}/{args.video_name}_vidlist.txt', '-c', 'copy', f'{video_save_path}', '-y'
     ]
-    print(' '.join(cmd))
     subprocess.call(cmd)
-    shutil.rmtree(osp.join(args.output, f'{args.video_name}_out_tmp_videos'))
-    if osp.exists(osp.join(args.output, f'{args.video_name}_inp_tmp_videos')):
-        shutil.rmtree(osp.join(args.output, f'{args.video_name}_inp_tmp_videos'))
-    os.remove(f'{args.output}/{args.video_name}_vidlist.txt')
+    # Keep the temp sub-video dirs by default so failed runs can be inspected and
+    # reruns resume only the missing segments. Pass --cleanup to remove them.
+    if args.cleanup:
+        shutil.rmtree(osp.join(args.output, f'{args.video_name}_out_tmp_videos'))
+        if osp.exists(osp.join(args.output, f'{args.video_name}_inp_tmp_videos')):
+            shutil.rmtree(osp.join(args.output, f'{args.video_name}_inp_tmp_videos'))
+        os.remove(f'{args.output}/{args.video_name}_vidlist.txt')
+    else:
+        print(f'Temp sub-videos kept in: {args.output} (pass --cleanup to remove)')
 
 
 def main():
@@ -358,6 +366,13 @@ def main():
     parser.add_argument('--ffmpeg_bin', type=str, default='ffmpeg', help='The path to ffmpeg')
     parser.add_argument('--extract_frame_first', action='store_true')
     parser.add_argument('--num_process_per_gpu', type=int, default=1)
+    parser.add_argument(
+        '--force', action='store_true',
+        help='Reprocess all sub-videos even if completed ones already exist (disables resume)')
+    parser.add_argument(
+        '--cleanup', action='store_true',
+        help='Delete temp sub-video/frame dirs after a successful run. Default: keep them '
+             'for debugging / resuming failed segments.')
 
     parser.add_argument(
         '--alpha_upsampler',
@@ -381,7 +396,7 @@ def main():
 
     if is_video and args.input.endswith('.flv'):
         mp4_path = args.input.replace('.flv', '.mp4')
-        os.system(f'ffmpeg -i {args.input} -codec copy {mp4_path}')
+        os.system(f'ffmpeg -hide_banner -loglevel error -i {args.input} -codec copy {mp4_path}')
         args.input = mp4_path
 
     if args.extract_frame_first and not is_video:
@@ -389,7 +404,7 @@ def main():
 
     run(args)
 
-    if args.extract_frame_first:
+    if args.extract_frame_first and args.cleanup:
         tmp_frames_folder = osp.join(args.output, f'{args.video_name}_inp_tmp_frames')
         shutil.rmtree(tmp_frames_folder)
 
